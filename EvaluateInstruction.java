@@ -64,35 +64,40 @@ public class EvaluateInstruction {
 			showError("The first instruction cannot contain a comma.");
 			return false;
 		}
-		switch (arrayListOfALine.get(0)){
-			case "MOVE":
-				return checkMOVE(arrayListOfALine);
-			case "MOVEI":
-				return checkMOVEI(arrayListOfALine);
-			case "ADD":
-				return checkADD(arrayListOfALine);
-			case "INC":
-				return checkINC(arrayListOfALine);
-			case "SUB":
-				return checkSUB(arrayListOfALine);
-			case "DEC":
-				return checkDEC(arrayListOfALine);
-			case "MUL":
-				return checkMUL(arrayListOfALine);
-			case "DIV":
-				return checkDIV(arrayListOfALine);
-			case "BEQ":
-				return checkBEQ(arrayListOfALine);
-			case "BLT":
-				return checkBLT(arrayListOfALine);
-			case "BGT":
-				return checkBGT(arrayListOfALine);
-			case "BR":
-				return checkBR(arrayListOfALine);
-			case "END":
-				return checkEND(arrayListOfALine);
-			default:
-				return checkLabel(arrayListOfALine);
+		if (arrayListOfALine.get(0).endsWith(":"))	// if the first word ends with ':'
+			return checkLabel(arrayListOfALine);
+		else{
+			switch (arrayListOfALine.get(0)){
+				case "MOVE":
+					return checkMOVE(arrayListOfALine);
+				case "MOVEI":
+					return checkMOVEI(arrayListOfALine);
+				case "ADD":
+					return checkADD(arrayListOfALine);
+				case "INC":
+					return checkINC(arrayListOfALine);
+				case "SUB":
+					return checkSUB(arrayListOfALine);
+				case "DEC":
+					return checkDEC(arrayListOfALine);
+				case "MUL":
+					return checkMUL(arrayListOfALine);
+				case "DIV":
+					return checkDIV(arrayListOfALine);
+				case "BEQ":
+					return checkBEQ(arrayListOfALine);
+				case "BLT":
+					return checkBLT(arrayListOfALine);
+				case "BGT":
+					return checkBGT(arrayListOfALine);
+				case "BR":
+					return checkBR(arrayListOfALine);
+				case "END":
+					return checkEND(arrayListOfALine);
+				default:
+					showError("Invalid opcode");
+					return false;
+			}
 		}
 	}
 
@@ -207,16 +212,20 @@ public class EvaluateInstruction {
 		// checking if the first source location has integers/register ending with a comma
 		if (checkForComma(arrayListOfALine.get(1))){
 			String wordWithoutComma = arrayListOfALine.get(1).substring(0, arrayListOfALine.get(1).length()-1);
-			// the word should either contain register or octal value
-			if (!wordWithoutComma.matches("[0-7]+") && !checkForRegister(wordWithoutComma)){
+			// the word should either contain register or octal value or a source name
+			if (!wordWithoutComma.matches("[0-7]+") && !checkForRegister(wordWithoutComma)
+					&& !checkForSource(wordWithoutComma)){
+				showError("Invalid Source");
 				return false;
 			}
 		}		
 		// checking if the second source location has integers/register ending with a comma
 		if (checkForComma(arrayListOfALine.get(2))){
 			String wordWithoutComma = arrayListOfALine.get(2).substring(0, arrayListOfALine.get(2).length()-1);
-			// the word should either contain register or octal value
-			if (!wordWithoutComma.matches("[0-7]+") && !checkForRegister(wordWithoutComma)){
+			// the word should either contain register or octal value or a source name
+			if (!wordWithoutComma.matches("[0-7]+") && !checkForRegister(wordWithoutComma)
+					&& !checkForSource(wordWithoutComma)){
+				showError("Invalid Source");
 				return false;
 			}
 		}
@@ -285,7 +294,9 @@ public class EvaluateInstruction {
 			return false;
 		}
 		// the source should either contain an or octal value or register number
-		if (!arrayListOfALine.get(1).matches("[0-7]+") && !checkForRegister(arrayListOfALine.get(1))){
+		if (!arrayListOfALine.get(1).matches("[0-7]+") && !checkForRegister(arrayListOfALine.get(1)) 
+				&& !(checkForSource(arrayListOfALine.get(1)))){
+			showError("Invalid Source");
 			return false;
 		}
 		return true;
@@ -317,8 +328,10 @@ public class EvaluateInstruction {
 		// checking if the first source location has integers/register ending with a comma
 		if (checkForComma(arrayListOfALine.get(1))){
 			String wordWithoutComma = arrayListOfALine.get(1).substring(0, arrayListOfALine.get(1).length()-1);
-			// the word should either contain register or an octal value
-			if (!wordWithoutComma.matches("[0-7]+") && !checkForRegister(wordWithoutComma)){
+			// the word should either contain register or an octal value or a source name
+			if (!wordWithoutComma.matches("[0-7]+") && !checkForRegister(wordWithoutComma)
+					&& !checkForSource(wordWithoutComma)){
+				showError("Invalid Source");
 				return false;
 			}
 		}
@@ -326,14 +339,16 @@ public class EvaluateInstruction {
 		// checking if the second source location has integers/register ending with a comma
 		if (checkForComma(arrayListOfALine.get(2))){
 			String wordWithoutComma = arrayListOfALine.get(2).substring(0, arrayListOfALine.get(2).length()-1);
-			// the word should either contain register or an octal value
-			if (!wordWithoutComma.matches("[0-7]+") && !checkForRegister(wordWithoutComma)){
+			// the word should either contain register or an octal value or a source name
+			if (!wordWithoutComma.matches("[0-7]+") && !checkForRegister(wordWithoutComma)
+					&& !checkForSource(wordWithoutComma)){
+				showError("Invalid Source");
 				return false;
 			}
 		}
 		
 		// checking if the destination is a register 
-		if (!checkForRegister(arrayListOfALine.get(3)))
+		if (!checkForRegister(arrayListOfALine.get(3)) && !checkForDestination(arrayListOfALine.get(3)))
 			return false;
 		return true;	// if everything before is not true, it will return true
 	}
@@ -364,8 +379,11 @@ public class EvaluateInstruction {
 			}
 		}
 		// checking for destination location R0-R7
-		if (!checkForRegister(arrayListOfALine.get(2)))						
+		if (!checkForRegister(arrayListOfALine.get(2)) && !checkForDestination(arrayListOfALine.get(2))){
+			showError("Invalid Destination");
 			return false;
+		}
+			
 		return true;	// if everything before is not true, it will return true
 	}
 	
@@ -375,10 +393,34 @@ public class EvaluateInstruction {
 	 * @return a boolean value
 	 */
 	private boolean checkMOVE(ArrayList<String> arrayListOfALine) {
-		// either of the two conditions can make the function true
-		if (checkMOVEI(arrayListOfALine) || checkForSourceInMOVE (arrayListOfALine))
-			return true;
-		return false;	// if everything before is not false, it will return false
+		// checking if the instruction has more or less than three
+		if (arrayListOfALine.size() != 3)
+		{
+			showError("Instruction error");
+			return false;
+		}
+		// checking if the source location ends with a comma
+		else if (!checkForComma(arrayListOfALine.get(1))){
+			showError("The source must ends with a comma.");
+			return false;
+		}
+		// checking if the source location has integers ending with a comma
+		if (checkForComma(arrayListOfALine.get(1))){
+			String wordWithoutComma = arrayListOfALine.get(1).substring(0, arrayListOfALine.get(1).length()-1);
+			// should match R0-R7 or integers or source name
+			if (!wordWithoutComma.matches("[0-7]+") && !checkForRegister(wordWithoutComma) 
+					&& !checkForSource(wordWithoutComma)){
+					showError("Invalid source in Move.");
+					return false;
+			}
+		}
+		// checking for destination location R0-R7
+		if (!checkForRegister(arrayListOfALine.get(2)) && !checkForDestination(arrayListOfALine.get(2))){
+			showError("Invalid Destination");
+			return false;
+		}
+			
+		return true;	// if everything before is not true, it will return true
 	}
 
 	/**
@@ -410,10 +452,9 @@ public class EvaluateInstruction {
 				}
 			}
 		}
-		else{
-			showError("Register must have two characters, like R0, or an octal value.");
+		else	// if register is not of two characters
 			return false;
-		}
+
 		return true;
 	}
 	
@@ -428,31 +469,37 @@ public class EvaluateInstruction {
 		return false;
 	}
 	
-	private boolean checkForSourceInMOVE(ArrayList<String> arrayListOfALine){
-		// checking if the instruction has more or less than three
-		if (arrayListOfALine.size() != 3)
-		{
+	/**
+	 * checkForSource will check for letters, size, and a comma
+	 * @param source
+	 * @return
+	 */
+	private boolean checkForSource(String source){
+		// checking if the instruction has more than 5 characters
+		if (source.length() > 5)
+			return false;
+		else if (!source.matches("[a-zA-z]+"))
+			return false;
+		return true;
+	}
+	
+	/**
+	 * checkForDestination will check for letters, size, and a comma
+	 * @param source
+	 * @return
+	 */
+	private boolean checkForDestination(String destination){
+		// checking if the instruction has more than 5 characters
+		if (destination.length() > 5){
 			return false;
 		}
 		// checking if the source location ends with a comma
-		else if (!arrayListOfALine.get(1).contains(",")){
+		if (destination.contains(",")){
+			showError("Comma error");
 			return false;
 		}
-		// checking if the source location has register ending with a comma	
-		// ** This is the difference in checkMOVEI (...) **
-		else if (arrayListOfALine.get(1).contains(",")){
-			String wordWithoutComma = arrayListOfALine.get(1).substring(0, arrayListOfALine.get(1).length()-1);
-			if (!checkForRegister(wordWithoutComma)){
-				return false;
-			}
-		}
-		// checking for 2 charactered destination location
-		else if (!(arrayListOfALine.get(2).length() == 2)){					
-			return false;
-		}
-		// checking for destination location R0-R7
-		if (!checkForRegister(arrayListOfALine.get(2)))						
-			return false;		
+		if (!destination.matches("[a-zA-z]+"))
+			return false; 
 		return true;
 	}
 }

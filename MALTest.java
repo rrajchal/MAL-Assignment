@@ -26,7 +26,7 @@ public class MALTest {
 		ArrayList <ArrayList<String>> arrayListOfArrayListOfline = new ArrayList<ArrayList<String>>();
 		
 		// calling a function to get arrayList of arrayList of strings
-		arrayListOfArrayListOfline = input.getLines("MALCode.txt");
+		arrayListOfArrayListOfline = input.getLines("MALProgram1.txt");
 		
 		// calling a function to evaluate the strings in the arrayList
 		evaluateInstruction.evaluate(arrayListOfArrayListOfline);
