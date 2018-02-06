@@ -1,0 +1,4 @@
+
+Number of lines in the file: 10
+Too less instruction!: TOP: ---Error in line #: 4
+Total errors: 1

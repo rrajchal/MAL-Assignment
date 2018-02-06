@@ -1,0 +1,10 @@
+; Project: Mini Assembly Language (MAL) ---Warning: Missed EOL after comments
+       MOVEI 0, R8    ; first summation number (temporary index which will store 0-5) EOL ---Warning: Missed EOL after comments
+done:  ENDD            ; halts program---Warning: Missed EOL after comments
+
+Number of lines in the file: 14
+Invalid Destination: MOVEI 0, R8 ---Error in line #: 6
+Invalid opcode: ADDD R2, R0, R2 ---Error in line #: 11
+The first instruction cannot contain a comma.: INC, R0 ---Error in line #: 12
+Invalid opcode: done: ENDD ---Error in line #: 14
+Total errors: 4

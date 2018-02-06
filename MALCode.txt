@@ -1,15 +1,14 @@
-; Project: Mini Assembly Language (MAL)
-; CSI 3210 - Spring 2018 - J. Gurka
-; Submitted by: Rajesh Rajchal 
-; The MAL Code will add number from 1 thourgh 10
+; Project: Mini Assembly Language (MAL) 
+; CSI 3210 - Spring 2018 - J. Gurka EOL
+; Submitted by: Rajesh Rajchal EOL
+; The MAL Code will add number from decimal value of 1 through 5 EOL
 
-       MOVEI 0, R0    ; first summation number (temporary index which will store 0-10) 
-       MOVEI 10, R1   ; last summation number, R1 = 10
-       MOVEI 0, R2    ; temporary summation (running total) which is initialized as 0
-check: BEQ R2, R1, done  ; check if R1 == R2, if R2 == 10, it will branch to Done
-sum:   INC R0         ; the first number is increased by 1
-       ADD R2, R0, R2 ; R2+R0 = R2 (R2 is a new running total)
-       INC R0
-BR:    check          ; branch to the address label - check
-done:  end            ; halts program
-       
+       MOVEI 0, R8    ; first summation number (temporary index which will store 0-5) EOL 
+       MOVEI 5, R1   ; last summation number, R1 = 5 EOL
+       MOVEI 0, R2    ; temporary summation (running total) which is initialized as 0 EOL
+check: BEQ R2, R1, done  ; check if R1 == R2, if R2 == 5, it will branch to Done EOL
+sum:   INC R0         ; the first number is increased by 1 EOL
+       ADDD R2, R0, R2 ; R2+R0 = R2 (R2 is a new running total) EOL
+       INC, R0         ; increase by 1 EOL
+BR     check          ; branch to the address label - check EOL
+done:  ENDD            ; halts program

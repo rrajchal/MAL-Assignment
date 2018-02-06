@@ -1,4 +1,5 @@
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -6,29 +7,30 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- * ArrayListOfLines class takes a directory of the file as a string and evaluate each line
- * in the file. Each line will be split into words separated by a comma or spaces.
- * These words will be collected as elements of a arrayList
- * Each line will be converted into arrayList of words and the arrayList will be added to another arrayList
- * If a line starts ';' it will be added to the arrayList, but if the line contains ';' in the middle, 
- * the later part will not be added. comments begin with a semi-colon and end with EOL
- * However, if EOL is missing at the end of the line, it will pop up a warning message.
- * Missing EOL will not count towards error.  
+ * ArrayListOfLines class takes a directory of the file as a string and evaluate 
+ * each line in the file. Each line will be split into words separated by a comma
+ * or spaces. These words will be collected as elements of a arrayList. Each line
+ * will be converted into arrayList of words and the arrayList will be added to 
+ * another arrayList. If a line starts ';' it will be added to the arrayList, 
+ * but if the line contains ';' in the middle, the later part will not be added. 
+ * Comments begin with a semi-colon and end with EOL. However, if EOL is missing 
+ * at the end of the line, it will pop up a warning message. Missing EOL will not
+ * count towards error. The warning will also be written in the output file. 
  * So, if the lines in the file is: 
- *          ; Some codes
- *          MOVEI s, R0    ; first summation number (temporary index which will store 0-10) 
- *          MOVEI 10, R1   ; last summation number, R1 = 10
- * The arrayList will be like [[; Some codes], [MOVEI, s,, R0], [MOVEI, 10,, R1]]
+ *    ; Some codes
+ *    MOVEI s, R0    ; first summation number (temporary index) 
+ *    MOVEI 10, R1   ; last summation number, R1 = 10
+ * The arrayList will be: [[; Some codes], [MOVEI, s,, R0], [MOVEI, 10,, R1]]
  * @author Rajesh
  */
 public class ArrayListOfLines {
 	/**
-	 * This function takes a file name as a string and converts the lines of texts into
-	 * arrayList of the arrayList of strings
+	 * This function takes a file name as a string and converts the lines of 
+	 * texts into an arrayList of the arrayList of strings
 	 * @param file
 	 * @return arrayList of arrayList
 	 */
-	public ArrayList<ArrayList <String>> getLines(String file){
+	public ArrayList<ArrayList <String>> getLines(String file, BufferedWriter bufferWriter) throws IOException{
 		// The name of the file to open.
 		String fileName = file;
 		// To read a line from the file
@@ -60,7 +62,10 @@ public class ArrayListOfLines {
 						listOfLines.add(temp);
 						if (!line.endsWith("EOL")){
 							System.out.print(line);
+							bufferWriter.write(line);
 							System.out.println("---Warning: Missed EOL after comments");
+							bufferWriter.write("---Warning: Missed EOL after comments");
+							bufferWriter.newLine();
 						}	
 						continue;
 					}
@@ -69,7 +74,10 @@ public class ArrayListOfLines {
 					if (line.contains(";")){
 						if (!line.endsWith("EOL")){
 							System.out.print(line);
+							bufferWriter.write(line);
 							System.out.println("---Warning: Missed EOL after comments");
+							bufferWriter.write("---Warning: Missed EOL after comments");
+							bufferWriter.newLine();
 						}
 						String [] splitSemiColon = line.split("\\;");
 						line = splitSemiColon[0];
